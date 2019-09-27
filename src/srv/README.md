@@ -21,6 +21,13 @@ libPocoUtil.dll.a
 libPocoXML.dll.a
 libPocoZip.dll.a
 ```
+
+installation termux
+
+* build from source
+* fix shm_ references (just replaced with open)
+* linking with -llog is also required
+
 reference
 
 [pocoproject.org/docs/00100-GuidedTour](https://pocoproject.org/docs/00100-GuidedTour.html)
