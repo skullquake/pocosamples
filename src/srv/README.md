@@ -1,7 +1,10 @@
 poco hello
 
+installation (msys2)
+```
+pacman -S mingw-w64-i686-poco mingw-w64-x86_64-poco 
+```
 relevant libraries:
-
 ```
 libPocoCrypto.dll.a
 libPocoData.dll.a
@@ -18,7 +21,6 @@ libPocoUtil.dll.a
 libPocoXML.dll.a
 libPocoZip.dll.a
 ```
-
 reference
 
 [pocoproject.org/docs/00100-GuidedTour](https://pocoproject.org/docs/00100-GuidedTour.html)
