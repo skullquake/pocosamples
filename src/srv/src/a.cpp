@@ -35,135 +35,131 @@ using Poco::Util::OptionSet;
 using Poco::Util::OptionCallback;
 using Poco::Util::HelpFormatter;
 
-class TimeRequestHandler: public HTTPRequestHandler
-{
-public:
-	TimeRequestHandler(const std::string& format): _format(format)
-	{
-	}
-
-	void handleRequest(HTTPServerRequest& request,
-					   HTTPServerResponse& response)
-	{
-		Application& app = Application::instance();
-		app.logger().information("Request from "
-			+ request.clientAddress().toString());
-
-		Timestamp now;
-		std::string dt(DateTimeFormatter::format(now, _format));
-
-		response.setChunkedTransferEncoding(true);
-		response.setContentType("text/html");
-
-		std::ostream& ostr = response.send();
-		ostr << "<html><head><title>HTTPTimeServer powered by "
-				"POCO C++ Libraries</title>";
-		ostr << "<meta http-equiv=\"refresh\" content=\"1\"></head>";
-		ostr << "<body><p style=\"text-align: center; "
-				"font-size: 48px;\">";
-		ostr << dt;
-		ostr << "</p></body></html>";
-	}
-
-private:
-	std::string _format;
-};
-
-class TimeRequestHandlerFactory: public HTTPRequestHandlerFactory
-{
-public:
-	TimeRequestHandlerFactory(const std::string& format):
-		_format(format)
-	{
-	}
-
-	HTTPRequestHandler* createRequestHandler(
-		const HTTPServerRequest& request)
-	{
-		if (request.getURI() == "/")
-			return new TimeRequestHandler(_format);
-		else
-			return 0;
-	}
-
-private:
-	std::string _format;
-};
-
-class HTTPTimeServer: public Poco::Util::ServerApplication
-{
-public:
-	HTTPTimeServer(): _helpRequested(false)
-	{
-	}
-
-	~HTTPTimeServer()
-	{
-	}
-
-protected:
-	void initialize(Application& self)
-	{
-		loadConfiguration();
-		ServerApplication::initialize(self);
-	}
-
-	void uninitialize()
-	{
-		ServerApplication::uninitialize();
-	}
-
-	void defineOptions(OptionSet& options)
-	{
-		ServerApplication::defineOptions(options);
-
-		options.addOption(
-		Option("help", "h", "display argument help information")
-			.required(false)
-			.repeatable(false)
-			.callback(OptionCallback<HTTPTimeServer>(
-				this, &HTTPTimeServer::handleHelp)));
-	}
-
-	void handleHelp(const std::string& name, 
-					const std::string& value)
-	{
-		HelpFormatter helpFormatter(options());
-		helpFormatter.setCommand(commandName());
-		helpFormatter.setUsage("OPTIONS");
-		helpFormatter.setHeader(
-			"A web server that serves the current date and time.");
-		helpFormatter.format(std::cout);
-		stopOptionsProcessing();
-		_helpRequested = true;
-	}
-
-	int main(const std::vector<std::string>& args)
-	{
-		if (!_helpRequested)
+class TimeRequestHandler:public HTTPRequestHandler{
+	public:
+		TimeRequestHandler(const std::string& format)
+			:_format(format)
 		{
-			unsigned short port = (unsigned short)
-				config().getInt("HTTPTimeServer.port", 9980);
-			std::string format(
-				config().getString("HTTPTimeServer.format", 
-								   DateTimeFormat::SORTABLE_FORMAT));
-
-			ServerSocket svs(port);
-			HTTPServer srv(new TimeRequestHandlerFactory(format), 
-				svs, new HTTPServerParams);
-			srv.start();
-			waitForTerminationRequest();
-			srv.stop();
 		}
-		return Application::EXIT_OK;
-	}
+		void handleRequest(HTTPServerRequest& request,HTTPServerResponse& response){
+			Application& app=Application::instance();
+			app.logger().information("Request from "+request.clientAddress().toString());
+			Timestamp now;
+			std::string dt(DateTimeFormatter::format(now,_format));
+			response.setChunkedTransferEncoding(true);
+			response.setContentType("text/html");
+			std::ostream& ostr=response.send();
+			ostr<<"<html><head><title>HTTPTimeServer powered by POCO C++ Libraries</title>";
+			ostr<<"<meta http-equiv=\"refresh\" content=\"1\"></head>";
+			ostr<<"<body><p style=\"text-align:center;font-size: 48px;\">";
+			ostr<<dt;
+			ostr<<"</p></body></html>";
+		}
+	private:
+		std::string _format;
+};
+class OtherRequestHandler:public HTTPRequestHandler{
+	public:
+		OtherRequestHandler(const std::string& format)
+		{
+		}
+		void handleRequest(HTTPServerRequest& request,HTTPServerResponse& response){
+			Application& app=Application::instance();
+			app.logger().information("Request from "+request.clientAddress().toString());
+			std::ostream& ostr=response.send();
+			response.setChunkedTransferEncoding(false);
+			response.setContentType("text/html");
+			ostr<<"<html><head><title>Other Request Handler</title>";
+			ostr<<"<meta></head>";
+			ostr<<"<body><p style=\"text-align:center;font-size: 48px;\">";
+			ostr<<"<h3>test</h3>";
+			ostr<<"</body></html>";
+		}
+	private:
+};
+class TimeRequestHandlerFactory: public HTTPRequestHandlerFactory{
+	public:
+		TimeRequestHandlerFactory(const std::string& format)
+			:_format(format)
+		{
+		}
 
-private:
-	bool _helpRequested;
+		HTTPRequestHandler* createRequestHandler(const HTTPServerRequest& request)
+		{
+			if(request.getURI()=="/")
+				return new TimeRequestHandler(_format);
+			else if(request.getURI()=="/other")
+				return new OtherRequestHandler(_format);
+			return 0;
+		}
+	private:
+		std::string _format;
 };
 
-int main(int argc, char** argv)
-{
+class HTTPTimeServer: public Poco::Util::ServerApplication{
+	public:
+		HTTPTimeServer()
+			:_helpRequested(false)
+		{
+		}
+
+		~HTTPTimeServer()
+		{
+		}
+
+	protected:
+		void initialize(Application& self)
+		{
+			loadConfiguration();
+			ServerApplication::initialize(self);
+		}
+
+		void uninitialize()
+		{
+			ServerApplication::uninitialize();
+		}
+
+		void defineOptions(OptionSet& options)
+		{
+			ServerApplication::defineOptions(options);
+
+			options.addOption(
+				Option("help","h","display argument help information")
+				.required(false)
+				.repeatable(false)
+				.callback(OptionCallback<HTTPTimeServer>(this,&HTTPTimeServer::handleHelp))
+			);
+		}
+
+		void handleHelp(const std::string& name,const std::string& value)
+		{
+			HelpFormatter helpFormatter(options());
+			helpFormatter.setCommand(commandName());
+			helpFormatter.setUsage("OPTIONS");
+			helpFormatter.setHeader("A web server that serves the current date and time.");
+			helpFormatter.format(std::cout);
+			stopOptionsProcessing();
+			_helpRequested=true;
+		}
+
+		int main(const std::vector<std::string>& args)
+		{
+			if (!_helpRequested)
+			{
+				unsigned short port=(unsigned short)config().getInt("HTTPTimeServer.port",8080);
+				std::string format(config().getString("HTTPTimeServer.format", DateTimeFormat::SORTABLE_FORMAT));
+				ServerSocket svs(port);
+				HTTPServer srv(new TimeRequestHandlerFactory(format),svs,new HTTPServerParams);
+				srv.start();
+				waitForTerminationRequest();
+				srv.stop();
+			}
+			return Application::EXIT_OK;
+		}
+	private:
+		bool _helpRequested;
+};
+int main(int argc,char** argv){
 	HTTPTimeServer app;
-	return app.run(argc, argv);
+	return app.run(argc,argv);
 }
