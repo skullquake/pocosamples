@@ -7,7 +7,7 @@ SOEXT?=so
 BINEXT?=out
 endif
 ifneq (,$(findstring mingw,$(OS)))
-RUNENV=PYTHONHOME=/usr
+RUNENV=
 else
 RUNENV=
 endif
