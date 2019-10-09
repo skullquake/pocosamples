@@ -51,17 +51,6 @@ class TimeRequestHandler:public HTTPRequestHandler{
 				app.logger().information("Request from "+request.clientAddress().toString());
 				Timestamp now;
 				response.setChunkedTransferEncoding(true);
-				/*
-				std::string dt(DateTimeFormatter::format(now,_format));
-				std::ostream& ostr=response.send();
-				response.setContentType("text/html");
-				ostr<<"<html><head><title>HTTPTimeServer powered by POCO C++ Libraries</title>";
-				ostr<<"<meta http-equiv=\"refresh\" content=\"1\"></head>";
-				ostr<<"<body><p style=\"text-align:center;font-size: 48px;\">";
-				ostr<<dt;
-				ostr<<"</p></body></html>";
-				*/
-
 
 				std::istream& is=request.stream();
 				std::istreambuf_iterator<char> eos;
