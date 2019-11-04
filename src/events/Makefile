@@ -25,14 +25,18 @@ SRC:=$(shell find $(SRCDIR) -name '*.cpp')
 OBJS:=$(addprefix $(BUILDDIR)/,$(SRC:%.cpp=%.o))
 CFLAGS=\
 	-I./include
-LDFLAGS=\
+LDFALGS=
+ifneq (,$(findstring android,$(OS)))
+RUNENV+=\
+	-llog
+	-lPocoEncodings
+endif
+LDFLAGS+=\
 	-lPocoFoundation\
 	-lPocoJSON\
 	-lPocoNet\
 	-lPocoUtil\
 	-lPocoXML
-#	-llog
-#	-lPocoEncodings
 all:\
 	$(BIN)
 $(BIN):$(OBJS)
