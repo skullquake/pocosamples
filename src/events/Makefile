@@ -27,8 +27,8 @@ CFLAGS=\
 	-I./include
 LDFALGS=
 ifneq (,$(findstring android,$(OS)))
-RUNENV+=\
-	-llog
+LDFLAGS+=\
+	-llog\
 	-lPocoEncodings
 endif
 LDFLAGS+=\
