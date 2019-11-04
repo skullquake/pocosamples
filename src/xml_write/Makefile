@@ -27,8 +27,11 @@ CFLAGS=\
 	-I./include
 LDFLAGS=\
 	-lPocoFoundation\
-	-lPocoXML\
+	-lPocoXML
+ifneq (,$(findstring mingw,$(OS)))
+LDFLAGS+=\
 	-llog
+endif
 all:\
 	$(BIN)
 $(BIN):$(OBJS)

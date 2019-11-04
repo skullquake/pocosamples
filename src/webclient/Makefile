@@ -26,13 +26,13 @@ OBJS:=$(addprefix $(BUILDDIR)/,$(SRC:%.cpp=%.o))
 CFLAGS=\
 	-I./include
 LDFLAGS=\
-	-lPocoEncodings\
 	-lPocoFoundation\
 	-lPocoJSON\
 	-lPocoNet\
 	-lPocoUtil\
-	-lPocoXML\
-	-llog
+	-lPocoXML
+#	-lPocoEncodings\
+#	-llog
 all:\
 	$(BIN)
 $(BIN):$(OBJS)
