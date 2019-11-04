@@ -28,7 +28,7 @@ CFLAGS=\
 LDFLAGS=\
 	-lPocoFoundation\
 	-lPocoXML
-ifneq (,$(findstring mingw,$(OS)))
+ifneq (,$(findstring android,$(OS)))
 LDFLAGS+=\
 	-llog
 endif
