@@ -18,29 +18,19 @@ int main(int argc, char* argv[]){
 		"Baz",
 		"Qux"
 	};
-	{
-		Poco::Data::Statement stmt(ses);
-		stmt<<
-			R"(INSERT INTO Foo VALUES(?,?,?))",
-			Poco::Data::Keywords::use(f.Bar),
-			Poco::Data::Keywords::use(f.Baz),
-			Poco::Data::Keywords::use(f.Qux)
-		;
-		stmt.execute();
-	}
-	{
-		Poco::Data::Statement stmt(ses);
-		stmt<<
-			R"(SELECT Bar,Baz,QUX FROM Foo)",
-			Poco::Data::Keywords::into(f.Bar),
-			Poco::Data::Keywords::into(f.Baz),
-			Poco::Data::Keywords::into(f.Qux),
-			Poco::Data::Keywords::range(0,1)
-		;
-		while(!stmt.done()){
-			stmt.execute();
-			std::cout<<f.Bar<<" "<<f.Baz<<" "<<f.Qux<<std::endl;
-		}
-	}
+	Poco::Data::Statement stmt(ses);
+	stmt<<
+		R"(INSERT INTO Foo VALUES(?,?,?))",
+		//Poco::Data::Keywords::use(f.Bar),
+		//Poco::Data::Keywords::use(std::string("asdf")),
+		//Poco::Data::Keywords::use(i),
+		//Poco::Data::Keywords::useRef(i),
+		Poco::Data::Keywords::bind(1),//"asdf"),
+		//Poco::Data::Keywords::bind(i),
+
+		Poco::Data::Keywords::use(f.Baz),
+		Poco::Data::Keywords::use(f.Qux)
+	;
+	stmt.execute();
 	SQLite::Connector::unregisterConnector();
 }
