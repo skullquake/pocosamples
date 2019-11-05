@@ -11,24 +11,69 @@ int main(int argc, char* argv[]){
 		R"(DROP TABLE IF EXISTS Vec3f)",
 		Poco::Data::Keywords::now
 	;
+	ses<<
+		R"(DROP TABLE IF EXISTS DataSet)",
+		Poco::Data::Keywords::now
+	;
 	std::cout<<"done"<<std::endl;
 	std::cout<<"Creating table...";
 	ses<<
-		R"(CREATE TABLE IF NOT EXISTS Vec3f(x REAL,y REAL,z REAL))",
+		R"(
+		CREATE TABLE IF NOT EXISTS DataSet
+		(
+			id INTEGER NOT NULL PRIMARY KEY
+		)
+		)",
+		Poco::Data::Keywords::now
+	;
+	ses<<
+		R"(
+		CREATE TABLE IF NOT EXISTS Vec3f
+		(
+			x REAL,
+			y REAL,
+			z REAL,
+			id_DataSet INTEGER,
+			FOREIGN KEY(id_DataSet) REFERENCES DataSet(id)
+		)
+		)",
 		Poco::Data::Keywords::now
 	;
 	std::cout<<"done"<<std::endl;
 	ses.begin();
-	for(int i=0;i<32;i++){
-		std::cout<<"Creating row...";
+	{
 		Poco::Data::Statement stmt(ses);
 		stmt<<
-			R"(INSERT INTO Vec3f VALUES(?,?,?))",
-			Poco::Data::Keywords::bind(i),
-			Poco::Data::Keywords::bind(i),
-			Poco::Data::Keywords::bind(i)
+			R"(
+				INSERT INTO
+				DataSet	
+				(id)
+				VALUES(?)
+			)",
+			Poco::Data::Keywords::bind(0)
 		;
 		stmt.execute();
+	}
+
+	int nelem=8;
+	for(int i=0;i<nelem;i++){
+		std::cout<<"Creating row...";
+		{
+			Poco::Data::Statement stmt(ses);
+			stmt<<
+				R"(
+					INSERT INTO
+					Vec3f
+					(x,y,z,id_DataSet)
+					VALUES(?,?,?,?)
+				)",
+				Poco::Data::Keywords::bind((float)i/nelem),
+				Poco::Data::Keywords::bind((float)i/nelem),
+				Poco::Data::Keywords::bind((float)i/nelem),
+				Poco::Data::Keywords::bind(0)
+			;
+			stmt.execute();
+		}
 		/*
 		ses<<
 			R"(INSERT INTO Vec3f VALUES(?,?,?))",
