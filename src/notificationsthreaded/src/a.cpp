@@ -23,8 +23,9 @@ class Worker:public Poco::Runnable{
 			while(pNf){
 				WorkNotification* pWorkNf=dynamic_cast<WorkNotification*>(pNf.get());
 				if(pWorkNf){
-					std::cout<<"working["<<pWorkNf->data()<<"]"<<std::endl;
-					//Poco::Thread::sleep(10);
+					std::cout<<"working["<<pWorkNf->data()<<"]"<<"["<<Poco::ThreadPool::defaultPool().allocated()<<"]"<<std::endl;
+					
+					Poco::Thread::sleep(20);
 					//std::this_thread::sleep_for(std::chrono::milliseconds(100));
 				}
 				pNf=_queue.waitDequeueNotification();
@@ -39,12 +40,13 @@ int main(int argc, char** argv){
 	Worker worker2(queue);
 	Poco::ThreadPool::defaultPool().start(worker1);
 	Poco::ThreadPool::defaultPool().start(worker2);
-	for(int i=0;i<100;++i){
+	for(int i=0;i<4096;++i){
 		queue.enqueueNotification(new WorkNotification(i));
 	}
 	while(!queue.empty())
-		Poco::Thread::sleep(100);
+		Poco::Thread::sleep(1000);
 	queue.wakeUpAll();
+	///std::cout<<Poco::ThreadPool::defaultPool().available()<<std::endl;
 	Poco::ThreadPool::defaultPool().joinAll();
 	return 0;
 }

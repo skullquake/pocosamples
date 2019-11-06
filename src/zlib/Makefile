@@ -28,15 +28,10 @@ CFLAGS=\
 LDFLAGS=
 ifneq (,$(findstring android,$(OS)))
 LDFLAGS+=\
-	-lPocoEncodings\
 	-llog
 endif
-LDFLAGS+=\
-	-lPocoFoundation\
-	-lPocoJSON\
-	-lPocoNet\
-	-lPocoUtil\
-	-lPocoXML
+LDFLAGS=\
+	-lPocoFoundation
 all:\
 	$(BIN)
 $(BIN):$(OBJS)
@@ -60,12 +55,7 @@ $(BUILDDIR)/%.o: %.cpp
 clean:
 	@rm -r ./bin
 run: $(BIN)
-	$(RUNENV)\
-		$(BIN)\
-		-url=http://localhost:8080 \
-		-r=1024\
-		-t=8\
-		-v
+	$(RUNENV) $(BIN)
 lsvar:
 	@echo $(BIN)
 	@echo $(OBJS)
