@@ -10,10 +10,8 @@ int main(int argc, char** argv){
 	std::cout<<rnd.nextBool()<<std::endl;
 	std::cout<<rnd.nextDouble()<<std::endl;
 	Poco::RandomInputStream ris;
-	while(true){
-		std::string s;
-		ris>>s;
-		std::cout<<s<<std::endl;
-	}
+	std::string s;
+	ris>>s;
+	std::cout<<s<<std::endl;
 	return 0;
 }
