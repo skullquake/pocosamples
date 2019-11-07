@@ -1,1 +1,1 @@
-poco xml writing
+poco zlib deflate and inflate operations
