@@ -29,17 +29,17 @@ class ostreambin_iterator:public std::iterator<std::output_iterator_tag,void,voi
 };
 int main(int argc,char *argv[]){
 	if(argc==2){
-		std::vector<float> v(3);
-		for(int i=0;i<8;i++){
+		std::vector<float>v;// v(1);
+		for(int i=0;i<2;i++){
+			v.push_back(i);
+		}
+		for(int i=0;i<2;i++){
 			v.push_back(i);
 		}
 		if(strcmp(argv[1],"--raw")==0){
-			std::vector<float> v(3);
-			for(int i=0;i<8;i++){
-				v.push_back(i);
-			}
 			ostreambin_iterator<float> out(std::cout);
 			copy(std::begin(v),std::end(v),out);
+			//std::cout<<std::endl;
 			return EXIT_SUCCESS;
 		}else 
 		if(strcmp(argv[1],"--b64")==0){
@@ -50,6 +50,7 @@ int main(int argc,char *argv[]){
 			ostreambin_iterator<float> out(b64out);
 			copy(std::begin(v),std::end(v),out);
 			b64out.close();
+			//std::cout<<std::endl;
 			return EXIT_SUCCESS;
 
 		}else{
